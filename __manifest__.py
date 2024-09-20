@@ -1,7 +1,7 @@
 {
     'name': 'LinkedIn Integration',
     'version': '1.0',
-    'summary': 'Application to integrate linking data to the Odoo recruitment application. 1.1',
+    'summary': 'Application to integrate linking data to the Odoo recruitment application.',
     'category': 'Human Resources/Recruitment',
     'author': 'Paula Rodriguez - Nivelics',
     'depends': ['hr_recruitment'],
