@@ -1,0 +1,55 @@
+<odoo>
+    <!-- Acción para mostrar la vista de candidatos -->
+    <record id="action_linkedin_candidates" model="ir.actions.act_window">
+        <field name="name">LinkedIn Candidates</field>
+        <field name="res_model">linkedin.candidate</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Vista de lista de candidatos -->
+    <record id="view_linkedin_candidate_tree" model="ir.ui.view">
+        <field name="name">linkedin.candidate.tree</field>
+        <field name="model">linkedin.candidate</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="email"/>
+                <field name="profile_url"/>
+                <field name="resume"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_linkedin_candidate" model="ir.actions.act_window">
+        <field name="name">Candidatos LinkedIn3</field>
+        <field name="res_model">linkedin.candidate</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                <button name="action_linkedin_auth" string="Conectar con LinkedIn" type="object" class="oe_highlight"/>
+            </p>
+        </field>
+    </record>
+
+    <!-- Vista de formulario de candidatos -->
+    <!-- <record id="view_linkedin_candidate_form" model="ir.ui.view">
+        <field name="name">linkedin.candidate.form</field>
+        <field name="model">linkedin.candidate</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="email"/>
+                        <field name="profile_url"/>
+                        <field name="resume"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record> -->
+
+    <!-- Menú para LinkedIn Candidates -->
+    <menuitem id="menu_linkedin_recruitment_root" name="LinkedIn Recruitment" sequence="1"/>
+    <menuitem id="menu_linkedin_candidates" name="LinkedIn Candidates" parent="menu_linkedin_recruitment_root" action="action_linkedin_candidates" sequence="10"/>
+</odoo>
