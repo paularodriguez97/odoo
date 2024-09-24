@@ -8,7 +8,8 @@
     'data': [
         'data/cron.xml',
         'security/ir.model.access.csv',
-        'views/linkedin_candidates.xml'
+        'views/linkedin_candidates.xml',
+        'views/config_form.xml'
     ],
     'images': ['static/description/icon.png'],
     'installable': True,

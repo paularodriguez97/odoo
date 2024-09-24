@@ -1,0 +1,30 @@
+<odoo>
+    <!-- Acción para mostrar la vista de candidatos -->
+    <record id="action_linkedin_configuration" model="ir.actions.act_window">
+        <field name="name">Configuration</field>
+        <field name="res_model">linkedin_integration.config.form</field>
+        <field name="view_mode">form</field>
+    </record>
+
+    <!-- Vista de formulario de configuración -->
+    <record id="view_config_form" model="ir.ui.view">
+        <field name="name">linkedin_integration.config</field>
+        <field name="model">linkedin_integration.config.form</field>
+        <field name="arch" type="xml">
+            <form string="Configuration Form">
+                <group>
+                    <field name="field_one"/>
+                    <field name="field_two"/>
+                </group>
+                <footer>
+                    <button string="Save" type="object" name="action_save" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <menuitem id="menu_linkedin_recruitment_root" name="LinkedIn Recruitment" sequence="1"/>
+    <menuitem id="menu_linkedin_config" name="Configuration" parent="menu_linkedin_recruitment_root" action="action_linkedin_configuration" sequence="30"/>
+
+</odoo>
