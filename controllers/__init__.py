@@ -1,1 +1,1 @@
-from . import linkedin_controller
+from . import main

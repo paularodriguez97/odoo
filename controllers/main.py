@@ -4,7 +4,7 @@ import requests
 import urllib.parse
 import random
 
-class LinkedInController(http.Controller):
+class LinkedInCandidate(http.Controller):
     @http.route('/linkedin/auth', auth='public', type='http', website=True)
     def linkedin_auth(self):
         base_url = http.request.env['ir.config_parameter'].sudo().get_param('web.base.url')
@@ -52,12 +52,35 @@ class LinkedInController(http.Controller):
         profile_url = 'https://api.linkedin.com/v2/me'
         headers = {'Authorization': f'Bearer {access_token}'}
         profile_response = requests.get(profile_url, headers=headers)
-        profile_data = profile_response.json()
+        candidates_data = profile_response.json()
 
+        candidates_data = {
+            "localizedFirstName": "John",
+            "localizedLastName": "Doe",
+            "id": "abcd1234",
+            "profilePicture": {
+                "displayImage": "https://media-exp1.licdn.com/dms/image/C4E03AQElc_Jn7X5k/photo.jpg"
+            },
+            "headline": "Software Engineer at XYZ Corp",
+            "emailAddress": "johndoe@example.com"
+        }
+
+        candidates_data = [{
+            'fullName': candidates_data.get('localizedFirstName', '') + ' ' + candidates_data.get('localizedLastName', ''),
+            'linkedinProfile': 'https://linkedin.com/in/' + candidates_data.get('id', ''),
+            'email': candidates_data.get('emailAddress', ''),
+            'resume': candidates_data.get('summary', '')
+        }]
         # Crear un registro en el modelo linkedin.candidate
-        http.request.env['linkedin.candidate'].sudo().create({
-            'name': profile_data.get('localizedFirstName', '') + ' ' + profile_data.get('localizedLastName', ''),
-            # Puedes añadir más campos según la estructura de profile_data
-        })
+        # http.request.env['linkedin.candidate'].sudo().create({
+        #     'name': profile_data.get('localizedFirstName', '') + ' ' + profile_data.get('localizedLastName', ''),
+        #     # Puedes añadir más campos según la estructura de profile_data
+        # })
 
-        return f"Datos obtenidos: {profile_data}"
+        http.request.env['linkedin.candidate'].sudo().save_candidates(candidates_data)
+
+
+
+        return f"Datos obtenidos: {candidates_data}"
+
+
