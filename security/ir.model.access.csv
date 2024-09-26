@@ -1,4 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_linkedin_candidate,linkedin.candidate,model_linkedin_candidate,,1,1,1,1
+access_cron_trigger,cron.trigger,model_cron_trigger,,1,1,1,1
 access_linkedin_integration_config_form,access_linkedin_integration_config_form,model_linkedin_integration_config_form,,1,1,1,1
 

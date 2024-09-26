@@ -44,34 +44,9 @@ class LinkedInCandidate(http.Controller):
         token_json = response.json()
         access_token = token_json.get('access_token')
 
-        # Obtener el perfil del usuario autenticado
-        profile_url = 'https://api.linkedin.com/v2/userinfo'
-        headers = {'Authorization': f'Bearer {access_token}'}
-        profile_response = requests.get(profile_url, headers=headers)
-        candidates_data = profile_response.json()
+         # Guardar los datos en el modelo cron.trigger
+        http.request.env['cron.trigger'].sudo().create_access_token(access_token)
+        http.request.env['cron.trigger'].sudo().get_access_token(access_token)
 
-        # candidates_data = {
-        #     "localizedFirstName": "John",
-        #     "localizedLastName": "Doe",
-        #     "id": "abcd1234",
-        #     "profilePicture": {
-        #         "displayImage": "https://media-exp1.licdn.com/dms/image/C4E03AQElc_Jn7X5k/photo.jpg"
-        #     },
-        #     "headline": "Software Engineer at XYZ Corp",
-        #     "emailAddress": "johndoe@example.com"
-        # }
-
-        # candidates_data = [{
-        #     'fullName': candidates_data.get('name', '') + ' ' + candidates_data.get('localizedLastName', ''),
-        #     'linkedinProfile': 'https://linkedin.com/in/' + candidates_data.get('id', ''),
-        #     'email': candidates_data.get('emailAddress', ''),
-        #     'resume': candidates_data.get('summary', '')
-        # }]
-
-        # http.request.env['linkedin.candidate'].sudo().save_candidates(candidates_data)
-
-
-
-        return f"Datos obtenidos1: {candidates_data} "
-
+        return redirect(f'{base_url}/web?debug=assets%2Ctests#action=249&model=linkedin.candidate&view_type=list&cids=1&menu_id=189')
 

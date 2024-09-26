@@ -11,14 +11,24 @@
         <field name="name">linkedin_integration.config</field>
         <field name="model">linkedin_integration.config.form</field>
         <field name="arch" type="xml">
-            <form string="Configuration Form">
-                <group>
-                    <field name="field_one"/>
-                    <field name="field_two"/>
-                </group>
-                <footer>
-                    <button string="Save" type="object" name="action_save" class="btn-primary"/>
-                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+            <form string="Configuración">
+                <sheet>
+                    <!-- Primer Grupo: Configuración del Cron -->
+                    <group string="Configuración del Cron" colspan="2">
+                        <field name="execution_frequency" string="Frecuencia de Ejecución"/>
+                        <field name="cron_state" string="Estado del Cron"/>
+                    </group>
+
+                    <!-- Segundo Grupo: Filtros y Opciones de Migración -->
+                    <group string="Filtros y Opciones de Migración" colspan="2">
+                        <field name="offer_state" string="Seleccionar Estado de las Ofertas"/>
+                        <field name="max_candidates" string="Candidatos por Oferta"/>
+                        <field name="location_filter" string="Filtro de Ubicación"/>
+                    </group>
+                </sheet>
+                 <footer>
+                    <button name="action_save" string="Guardar" type="object" class="oe_highlight"/>
+                    <button name="action_cancel" string="Cancelar" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
         </field>

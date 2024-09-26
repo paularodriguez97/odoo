@@ -23,7 +23,7 @@ class LinkedInCandidate(models.Model):
     @api.constrains('candidates_data')
     def save_candidates(self, candidates_data):
         if not isinstance(candidates_data, list):
-            raise ValidationError("Los datos de los candidatos deben ser una lista.")
+            raise ValidationError("Candidate data should be a list.")
 
         for candidate in candidates_data:
             existing_candidate = self.env['linkedin.candidate'].search([
@@ -40,7 +40,7 @@ class LinkedInCandidate(models.Model):
                     'resume': candidate['resume'],
                 })
             else:
-                raise ValidationError(f"El candidato {candidate['fullName']} ya existe.")
+                raise ValidationError(f"The candidate {candidate['fullName']} already exists.")
 
     # Guarda los datos de los candidatos de LinkedIn en el modelo hr.applicant de Odoo.
     def save_candidates_to_hr_recruitment(self, candidates_data, job_id):
@@ -58,5 +58,5 @@ class LinkedInCandidate(models.Model):
                     'job_id': job_id,  # ID de la oferta de trabajo en Odoo
                 })
             else:
-                raise ValidationError(f"El solicitante {candidate['fullName']} ya existe en hr.applicant.")
+                raise ValidationError(f"The applicant {candidate['fullName']} already exists in hr.recruitment.")
 
