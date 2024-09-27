@@ -45,23 +45,84 @@ class CronTrigger(models.Model):
         if profile_response.status_code != 200:
             raise UserError(f'Error al obtener el perfil: {profile_response.text}')
 
-        candidates_data = {
-            "localizedFirstName": "esq12",
-            "localizedLastName": "eqse12",
-            "id": "3e4sq112",
-            "profilePicture": {
-                "displayImage": "https://ia-exsp112.licdn.com/dms/image/Cq4E03AQElc_Jn7X5k/photo.jpg"
-            },
-            "headline": "a Engiesneerq12 at XYZ Corp",
-            "emailAddress": "eseoes@examqpl12e.com"
-        }
 
-        candidates_data = [{
-            'fullName': candidates_data.get('name', '') + ' ' + candidates_data.get('localizedLastName', ''),
-            'linkedinProfile': 'https://linkedin.com/in/' + candidates_data.get('id', ''),
-            'email': candidates_data.get('emailAddress', ''),
-            'resume': candidates_data.get('summary', '')
-        }]
+        # Realizar una búsqueda en configuración.
+        config = self.env['linkedin_integration.config.form'].search([], limit=1)
+
+        default_offer_state = 'active'
+        default_max_candidates = 10
+        default_location_filter = 'Colombia'
+
+        if config:
+            record = config
+            offer_state = record.offer_state
+            max_candidates = record.max_candidates
+            location_filter = record.location_filter
+        else:
+            offer_state = default_offer_state
+            max_candidates = default_max_candidates
+            location_filter = default_location_filter
+
+
+        candidates_data = [
+            {
+                "localizedFirstName": "esq123ww",
+                "localizedLastName": "eqse123ww",
+                "id": "3e4sq1123www",
+                "profilePicture": {
+                    "displayImage": "https://ia-exwwwsp1123.licdn.com/dms/image/Cq4E03AQElc_Jn7X5k/photo.jpg"
+                },
+                "headline": "a Engiwwesneerq123 at XYZ Corp",
+                "emailAddress": "eswwweoes@examqpl123e.com",
+                "integrationContext": "urn:li:organization:2414183",
+                "companyApplyUrl": "http://linkedin.com",
+                "description": "We are looking for a passionate Software Engineer to design, develop and install software solutions. Software Engineer responsibilities include gathering user requirements, defining system functionality and writing code in various languages. Our ideal candidates are familiar with the software development life cycle (SDLC) from preliminary system analysis to tests and deployment.",
+                "employmentStatus": "PART_TIME",
+                "externalJobPostingId": "1234",
+                "listedAt": 1440716666,
+                "jobPostingOperationType": "CREATE",
+                "title": "Software Engineer",
+                "location": "San Francisco, CA",
+                "workplaceTypes": [
+                    "hybrid"
+                ],
+                "linkedInApplyStatus": "ENABLED"
+            },
+            {
+                "localizedFirstName": "esq123r",
+                "localizedLastName": "eqse123r",
+                "id": "3e4sq1123r",
+                "profilePicture": {
+                    "displayImage": "https://ia-exrsp1123.licdn.com/dms/image/Cq4E03AQElc_Jn7X5k/photo.jpg"
+                },
+                "headline": "a Engiesnererq123 at XYZ Corp",
+                "emailAddress": "eseoers@examqpl123e.com",
+                "integrationContext": "urn:li:organization:2414183",
+                "companyApplyUrl": "http://linkedin.com",
+                "description": "We are looking for a passionate Senior Software Engineer to design, develop and install software solutions. Software Engineer responsibilities include gathering user requirements, defining system functionality and writing code in various languages. Our ideal candidates are familiar with the software development life cycle (SDLC) from preliminary system analysis to tests and deployment.",
+                "employmentStatus": "PART_TIME",
+                "externalJobPostingId": "789",
+                "listedAt": 1440716666,
+                "jobPostingOperationType": "CREATE",
+                "title": "Senior Software Engineer",
+                "location": "San Francisco, CA",
+                "linkedInApplyStatus": "ENABLED"
+            }
+        ]
+
+        filtered_candidates = [candidate for candidate in candidates_data if candidate.get('linkedInApplyStatus', '').lower() == offer_state.lower() and candidate.get('location', '').strip().lower() == location_filter.strip().lower()]
+        limited_candidates = filtered_candidates[:max_candidates]
+
+        candidates_data_transformed = []
+
+        for candidate in limited_candidates:
+            transformed_candidate = {
+                'fullName': candidate.get('localizedFirstName', '') + ' ' + candidate.get('localizedLastName', ''),
+                'linkedinProfile': 'https://linkedin.com/in/' + candidate.get('id', ''),
+                'email': candidate.get('emailAddress', ''),
+                'resume': candidate.get('description', '')
+            }
+            candidates_data_transformed.append(transformed_candidate)
 
         linkedin_candidate_model = self.env['linkedin.candidate'].sudo()
-        linkedin_candidate_model.save_candidates(candidates_data)
+        linkedin_candidate_model.save_candidates(candidates_data_transformed)

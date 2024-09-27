@@ -1,36 +1,43 @@
 from odoo import models, fields, api
-
-class ConfigForm(models.TransientModel):
+from odoo.exceptions import UserError
+class ConfigForm(models.Model):
     _name = 'linkedin_integration.config.form'
     _description = 'Configuration Form'
 
-    # Configuración del Cron
-    execution_frequency = fields.Selection([
-        ('15', 'Cada 15 minutos'),
-        ('30', 'Cada 30 minutos'),
-        ('hourly', 'Cada hora'),
-        ('daily', 'Diariamente'),
-        ('weekly', 'Semanalmente'),
-        ('monthly', 'Mensualmente')
-    ], string="Frecuencia de Ejecución", required=True, default='hourly')
-    cron_state = fields.Selection([
-        ('active', 'Activo'),
-        ('inactive', 'Inactivo')
-    ], string="Estado del Cron", default='active')
-
     # Filtros y Opciones de Migración
     offer_state = fields.Selection([
-        ('active', 'Activas'),
-        ('in_progress', 'En Proceso'),
-        ('closed', 'Cerradas')
-    ], string="Seleccionar Estado de las Ofertas", default='active')
-    max_candidates = fields.Integer(string="Candidatos por Oferta", default=10)
-    location_filter = fields.Char(string="Filtro de Ubicación")
+        ('enabled', 'Enabled'),
+        ('in_progress', 'In Progress'),
+        ('closed', 'Closed')
+    ], string="Select Bid Status", default='enabled')
+    max_candidates = fields.Integer(string="Candidates by Offer", default=10)
+    location_filter = fields.Char(string="Location Filter", default='Colombia')
 
-    def action_save(self):
-        # Lógica para guardar la configuración
-        pass
+    @api.model
+    def default_get(self, fields):
+        res = super(ConfigForm, self).default_get(fields)
+        # Buscar el último registro existente
+        existing_record = self.search([], limit=1, order='id desc')
+        if existing_record:
+            # Cargar los valores del último registro
+            res.update({
+                'offer_state': existing_record.offer_state,
+                'max_candidates': existing_record.max_candidates,
+                'location_filter': existing_record.location_filter,
+            })
+        return res
 
-    def action_cancel(self):
-        # Lógica para cancelar la acción
-        pass
+    @api.model_create_multi
+    def create(self, vals_list):
+        vals_list = [vals.copy() for vals in vals_list]
+
+        # Buscar si ya existe un registro
+        existing_record = self.search([], limit=1)
+        if existing_record:
+            # Si existe, actualizarlo en lugar de crear uno nuevo
+            existing_record.write(vals_list[0])
+            return existing_record
+        else:
+            # Si no existe, procede a crear uno nuevo
+            return super(ConfigForm, self).create(vals_list)
+

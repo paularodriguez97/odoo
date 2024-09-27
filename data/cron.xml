@@ -6,7 +6,7 @@
             <field name="state">code</field>
             <field name="code">model.get_access_token()</field>
             <field name="interval_number">1</field>
-            <field name="interval_type">hours</field>
+            <field name="interval_type">weeks</field>
             <field name="numbercall">-1</field>
         </record>
     </data>
