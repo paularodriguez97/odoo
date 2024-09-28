@@ -7,9 +7,16 @@
     </record>
 
     <!-- Acción para redirigir a /linkedin/auth -->
-    <record id="action_redirect_prueba" model="ir.actions.act_url">
+    <record id="action_redirect_linkedin" model="ir.actions.act_url">
         <field name="name">Linkedin Authentication</field>
         <field name="url">/linkedin/auth</field>
+        <field name="target">self</field>
+    </record>
+
+    <!-- Acción para redirigir a /add/hr_recruitment -->
+    <record id="action_hr_recruitment_linkedin" model="ir.actions.act_url">
+        <field name="name">Add to Recruitment</field>
+        <field name="url">/add/hr_recruitment</field>
         <field name="target">self</field>
     </record>
 
@@ -23,12 +30,14 @@
                 <field name="email"/>
                 <field name="profile_url"/>
                 <field name="resume"/>
+                <field name="job_title"/>
             </tree>
         </field>
     </record>
 
     <!-- Menú para LinkedIn Candidates -->
     <menuitem id="menu_linkedin_recruitment_root" name="LinkedIn Recruitment" sequence="1"/>
+    <menuitem id="menu_redirect_linkedin" name="Connect your Linkedin" parent="menu_linkedin_recruitment_root" action="action_redirect_linkedin" sequence="20"/>
     <menuitem id="menu_linkedin_candidates" name="LinkedIn Candidates" parent="menu_linkedin_recruitment_root" action="action_linkedin_candidates" sequence="10"/>
-    <menuitem id="menu_redirect_prueba" name="Connect your Linkedin" parent="menu_linkedin_recruitment_root" action="action_redirect_prueba" sequence="20"/>
+    <menuitem id="menu_redirect_recruitment" name="Add to Recruitment" parent="menu_linkedin_recruitment_root" action="action_hr_recruitment_linkedin" sequence="30"/>
 </odoo>

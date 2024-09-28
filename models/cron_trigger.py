@@ -2,7 +2,6 @@ from odoo import models, fields, api, http
 from odoo.exceptions import UserError
 import requests
 
-
 class CronTrigger(models.Model):
     _name = 'cron.trigger'
     _description = 'Cron trigger'
@@ -17,7 +16,7 @@ class CronTrigger(models.Model):
         raise UserError('Access token no puede ser vacío.')
 
     # Ejecuta el controlador de autenticación.
-    def get_access_token(self, access_token=None):
+    def get_access_token(self, mode="default", access_token=None ):
         if access_token:
             self.sudo().write({'access_token': access_token})
 
@@ -32,7 +31,7 @@ class CronTrigger(models.Model):
 
         # Si current_access_token sigue vacío
             if not current_access_token:
-                raise UserError('Access token no definido y no existe uno guardado en la base de datos.')
+                raise UserError('You must first perform with linkedin before executing this action.')
 
 
         # Obtener el perfil del usuario autenticado
@@ -49,20 +48,14 @@ class CronTrigger(models.Model):
         # Realizar una búsqueda en configuración.
         config = self.env['linkedin_integration.config.form'].search([], limit=1)
 
-        default_offer_state = 'active'
-        default_max_candidates = 10
-        default_location_filter = 'Colombia'
-
         if config:
             record = config
             offer_state = record.offer_state
             max_candidates = record.max_candidates
             location_filter = record.location_filter
         else:
-            offer_state = default_offer_state
-            max_candidates = default_max_candidates
-            location_filter = default_location_filter
-
+            offer_state = 'active'
+            max_candidates = 10
 
         candidates_data = [
             {
@@ -76,17 +69,21 @@ class CronTrigger(models.Model):
                 "emailAddress": "eswwweoes@examqpl123e.com",
                 "integrationContext": "urn:li:organization:2414183",
                 "companyApplyUrl": "http://linkedin.com",
-                "description": "We are looking for a passionate Software Engineer to design, develop and install software solutions. Software Engineer responsibilities include gathering user requirements, defining system functionality and writing code in various languages. Our ideal candidates are familiar with the software development life cycle (SDLC) from preliminary system analysis to tests and deployment.",
+                "resume": "We are looking for a passionate Software Engineer to design, develop and install software solutions. Software Engineer responsibilities include gathering user requirements, defining system functionality and writing code in various languages. Our ideal candidates are familiar with the software development life cycle (SDLC) from preliminary system analysis to tests and deployment.",
                 "employmentStatus": "PART_TIME",
                 "externalJobPostingId": "1234",
                 "listedAt": 1440716666,
                 "jobPostingOperationType": "CREATE",
                 "title": "Software Engineer",
-                "location": "San Francisco, CA",
+                "location": "San Francisco",
                 "workplaceTypes": [
                     "hybrid"
                 ],
-                "linkedInApplyStatus": "ENABLED"
+                "linkedInApplyStatus": "ENABLED",
+                "jobName": "Nivelics sas",
+                "jobTitle": "Desarrollador Drupal",
+                "description": "Este es un trabajo de prueba para validacion.",
+                "requirements": "activo"
             },
             {
                 "localizedFirstName": "esq123r",
@@ -99,20 +96,27 @@ class CronTrigger(models.Model):
                 "emailAddress": "eseoers@examqpl123e.com",
                 "integrationContext": "urn:li:organization:2414183",
                 "companyApplyUrl": "http://linkedin.com",
-                "description": "We are looking for a passionate Senior Software Engineer to design, develop and install software solutions. Software Engineer responsibilities include gathering user requirements, defining system functionality and writing code in various languages. Our ideal candidates are familiar with the software development life cycle (SDLC) from preliminary system analysis to tests and deployment.",
+                "resume": "We are looking for a passionate Senior Software Engineer to design, develop and install software solutions. Software Engineer responsibilities include gathering user requirements, defining system functionality and writing code in various languages. Our ideal candidates are familiar with the software development life cycle (SDLC) from preliminary system analysis to tests and deployment.",
                 "employmentStatus": "PART_TIME",
                 "externalJobPostingId": "789",
                 "listedAt": 1440716666,
                 "jobPostingOperationType": "CREATE",
                 "title": "Senior Software Engineer",
-                "location": "San Francisco, CA",
-                "linkedInApplyStatus": "ENABLED"
+                "location": "Colombia",
+                "linkedInApplyStatus": "ENABLED",
+                "jobName": "Emergya",
+                "jobTitle": "Desarrollador Drupal",
+                "description": "Este es un trabajo de prueba para validacion.",
+                "requirements": "activo"
             }
         ]
 
-        filtered_candidates = [candidate for candidate in candidates_data if candidate.get('linkedInApplyStatus', '').lower() == offer_state.lower() and candidate.get('location', '').strip().lower() == location_filter.strip().lower()]
-        limited_candidates = filtered_candidates[:max_candidates]
+        if location_filter == False:
+            filtered_candidates = [candidate for candidate in candidates_data if candidate.get('linkedInApplyStatus', '').lower() == offer_state.lower()]
+        else:
+            filtered_candidates = [candidate for candidate in candidates_data if candidate.get('linkedInApplyStatus', '').lower() == offer_state.lower() and candidate.get('location', '').strip().lower() == location_filter.strip().lower()]
 
+        limited_candidates = filtered_candidates[:max_candidates]
         candidates_data_transformed = []
 
         for candidate in limited_candidates:
@@ -120,9 +124,17 @@ class CronTrigger(models.Model):
                 'fullName': candidate.get('localizedFirstName', '') + ' ' + candidate.get('localizedLastName', ''),
                 'linkedinProfile': 'https://linkedin.com/in/' + candidate.get('id', ''),
                 'email': candidate.get('emailAddress', ''),
-                'resume': candidate.get('description', '')
+                'resume': candidate.get('resume', ''),
+                'jobName': candidate.get('jobName', ''),
+                'jobTitle': candidate.get('jobTitle', ''),
+                'department': candidate.get('location', ''),
+                'jobDesription': candidate.get('description', ''),
+                'requirements': candidate.get('requirements', '')
             }
             candidates_data_transformed.append(transformed_candidate)
 
         linkedin_candidate_model = self.env['linkedin.candidate'].sudo()
-        linkedin_candidate_model.save_candidates(candidates_data_transformed)
+        if mode == "default":
+            linkedin_candidate_model.save_candidates(candidates_data_transformed)
+        elif mode == "hr":
+            linkedin_candidate_model.save_candidates_to_hr_recruitment(candidates_data_transformed)

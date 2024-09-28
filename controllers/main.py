@@ -46,7 +46,15 @@ class LinkedInCandidate(http.Controller):
 
          # Guardar los datos en el modelo cron.trigger
         http.request.env['cron.trigger'].sudo().create_access_token(access_token)
-        http.request.env['cron.trigger'].sudo().get_access_token(access_token)
+        http.request.env['cron.trigger'].sudo().get_access_token(mode="default", access_token=access_token)
 
         return redirect(f'{base_url}/web?debug=assets%2Ctests#action=249&model=linkedin.candidate&view_type=list&cids=1&menu_id=189')
 
+
+    @http.route('/add/hr_recruitment', auth='public', website=True)
+    def linkedin_add_recruitment(self, **kw):
+        # Guardar los datos en el modelo cron.trigger
+        http.request.env['cron.trigger'].sudo().get_access_token(mode="hr")
+        base_url = http.request.env['ir.config_parameter'].sudo().get_param('web.base.url')
+
+        return redirect(f'{base_url}/web?debug=assets%2Ctests#action=216&model=hr.job&view_type=kanban&cids=1&menu_id=142')

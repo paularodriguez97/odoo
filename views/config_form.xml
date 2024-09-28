@@ -25,6 +25,6 @@
     </record>
 
     <menuitem id="menu_linkedin_recruitment_root" name="LinkedIn Recruitment" sequence="1"/>
-    <menuitem id="menu_linkedin_config" name="Configuration" parent="menu_linkedin_recruitment_root" action="action_linkedin_configuration" sequence="30"/>
+    <menuitem id="menu_linkedin_config" name="Configuration" parent="menu_linkedin_recruitment_root" action="action_linkedin_configuration" sequence="40"/>
 
 </odoo>
