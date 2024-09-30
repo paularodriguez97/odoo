@@ -8,7 +8,7 @@ class CronTrigger(models.Model):
 
     access_token = fields.Char(string='Access Token')
 
-
+    #Guarda en la bd el acces_token
     def create_access_token(self, access_token):
         if access_token:
             record = self.create({'access_token': access_token})
@@ -27,7 +27,7 @@ class CronTrigger(models.Model):
             if record:
                 current_access_token = record.access_token
             else:
-                raise UserError('No hay registros disponibles.')
+                raise UserError('No hay registros disponibles.')  #poner en ingles.
 
         # Si current_access_token sigue vacío
             if not current_access_token:
@@ -49,18 +49,19 @@ class CronTrigger(models.Model):
         config = self.env['linkedin_integration.config.form'].search([], limit=1)
 
         if config:
-            record = config
+            record = config    #eliminar record
             offer_state = record.offer_state
             max_candidates = record.max_candidates
             location_filter = record.location_filter
         else:
             offer_state = 'active'
             max_candidates = 10
+            location_filter = False
 
         candidates_data = [
             {
-                "localizedFirstName": "esq123ww",
-                "localizedLastName": "eqse123ww",
+                "localizedFirstName": "Jose",
+                "localizedLastName": "Cuervo",
                 "id": "3e4sq1123www",
                 "profilePicture": {
                     "displayImage": "https://ia-exwwwsp1123.licdn.com/dms/image/Cq4E03AQElc_Jn7X5k/photo.jpg"
@@ -83,11 +84,15 @@ class CronTrigger(models.Model):
                 "jobName": "Nivelics sas",
                 "jobTitle": "Desarrollador Drupal",
                 "description": "Este es un trabajo de prueba para validacion.",
+                "partner_mobile": "3112111111",
+                "partner_phone": "6015555555",
+                "salary_expected": "5000000",
+                "salary_proposed": "4500000",
                 "requirements": "activo"
             },
             {
-                "localizedFirstName": "esq123r",
-                "localizedLastName": "eqse123r",
+                "localizedFirstName": "Clara",
+                "localizedLastName": "Gonzales",
                 "id": "3e4sq1123r",
                 "profilePicture": {
                     "displayImage": "https://ia-exrsp1123.licdn.com/dms/image/Cq4E03AQElc_Jn7X5k/photo.jpg"
@@ -107,6 +112,38 @@ class CronTrigger(models.Model):
                 "jobName": "Emergya",
                 "jobTitle": "Desarrollador Drupal",
                 "description": "Este es un trabajo de prueba para validacion.",
+                "partner_mobile": "3112111111",
+                "partner_phone": "6015555555",
+                "salary_expected": "5000000",
+                "salary_proposed": "4500000",
+                "requirements": "activo"
+            },
+            {
+                "localizedFirstName": "Juan",
+                "localizedLastName": "Perez",
+                "id": "3e4sq1sa2123r",
+                "profilePicture": {
+                    "displayImage": "https://ia-exrsp1123.licdn.com/dms/image/Cq4E03AQElc_Jn7X5k/photo.jpg"
+                },
+                "headline": "a Engienerer at XYZ Corp",
+                "emailAddress": "example@examqpl123e.com",
+                "integrationContext": "urn:li:organization:2414183",
+                "companyApplyUrl": "http://linkedin.com",
+                "resume": "We are looking for a passionate Senior Software Engineer to design, develop and install software solutions. Software Engineer responsibilities include gathering user requirements, defining system functionality and writing code in various languages. Our ideal candidates are familiar with the software development life cycle (SDLC) from preliminary system analysis to tests and deployment.",
+                "employmentStatus": "PART_TIME",
+                "externalJobPostingId": "789",
+                "listedAt": 1440716666,
+                "jobPostingOperationType": "CREATE",
+                "title": "Senior Software Engineer",
+                "location": "Colombia",
+                "linkedInApplyStatus": "ENABLED",
+                "jobName": "Bolivar",
+                "jobTitle": "Desarrollador",
+                "description": "Este es un trabajo de prueba para validacion.",
+                "partner_mobile": "3112111111",
+                "partner_phone": "6015555555",
+                "salary_expected": "5000000",
+                "salary_proposed": "4500000",
                 "requirements": "activo"
             }
         ]
@@ -121,14 +158,18 @@ class CronTrigger(models.Model):
 
         for candidate in limited_candidates:
             transformed_candidate = {
-                'fullName': candidate.get('localizedFirstName', '') + ' ' + candidate.get('localizedLastName', ''),
-                'linkedinProfile': 'https://linkedin.com/in/' + candidate.get('id', ''),
-                'email': candidate.get('emailAddress', ''),
-                'resume': candidate.get('resume', ''),
+                'partner_name': candidate.get('localizedFirstName', '') + ' ' + candidate.get('localizedLastName', ''),
+                'linkedin_profile': 'https://linkedin.com/in/' + candidate.get('id', ''),
+                'email_from': candidate.get('emailAddress', ''),
+                'description': candidate.get('resume', ''),
                 'jobName': candidate.get('jobName', ''),
                 'jobTitle': candidate.get('jobTitle', ''),
                 'department': candidate.get('location', ''),
                 'jobDesription': candidate.get('description', ''),
+                'partner_phone': candidate.get('partner_phone', ''),
+                'partner_mobile': candidate.get('partner_mobile', ''),
+                'salary_expected': float(candidate.get('salary_expected', '')),
+                'salary_proposed': float(candidate.get('salary_proposed', '')),
                 'requirements': candidate.get('requirements', '')
             }
             candidates_data_transformed.append(transformed_candidate)

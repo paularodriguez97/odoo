@@ -23,7 +23,7 @@ class LinkedInCandidate(http.Controller):
 
         # Validar el estado para prevenir ataques de tipo CSRF
         if original_state != received_state:
-            return "Error: El estado no coincide. Posible intento de ataque."
+            return "Error: El estado no coincide. Posible intento de ataque."   #ponerlo en ingles
 
         code = kw.get('code')
         client_id = '78mzayek1quywb'
@@ -48,7 +48,7 @@ class LinkedInCandidate(http.Controller):
         http.request.env['cron.trigger'].sudo().create_access_token(access_token)
         http.request.env['cron.trigger'].sudo().get_access_token(mode="default", access_token=access_token)
 
-        return redirect(f'{base_url}/web?debug=assets%2Ctests#action=249&model=linkedin.candidate&view_type=list&cids=1&menu_id=189')
+        return redirect(f'{base_url}/web#action=266&model=linkedin.candidate&view_type=list&cids=1&menu_id=200')     #Validar urls correctas
 
 
     @http.route('/add/hr_recruitment', auth='public', website=True)

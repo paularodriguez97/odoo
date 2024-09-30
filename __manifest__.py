@@ -7,6 +7,7 @@
     'depends': ['hr_recruitment'],
     'data': [
         'data/cron.xml',
+        'data/cron_hr.xml',
         'security/ir.model.access.csv',
         'views/linkedin_candidates.xml',
         'views/config_form.xml'
